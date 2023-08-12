@@ -1,0 +1,17 @@
+.home {
+
+    background-color: $white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height:70vh;
+
+    .card {
+        background-color: $white;
+        border-radius: 20px;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        border: none;
+        outline: none;
+    }
+
+}
