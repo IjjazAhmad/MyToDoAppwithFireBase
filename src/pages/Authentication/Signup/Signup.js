@@ -23,11 +23,10 @@ export default function Signup() {
         const user = userCredential.user;
         // ...
         addUserDoc(user)
-
+        window.notify("user SignUp successfuly", "success")
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        window.notify("something want worng", "error")
         // ..
       });
     setState(initialState)

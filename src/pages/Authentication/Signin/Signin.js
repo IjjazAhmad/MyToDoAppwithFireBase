@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../../config/firebase';
 
 const initialState = { email: "", password: "" }
 export default function Signin() {
-const navigate = useNavigate()
-
   const [state, setState] = useState(initialState)
 
   const handleChange = e => {
@@ -19,15 +17,14 @@ const navigate = useNavigate()
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in 
-      const user = userCredential.user;
-      // navigate("/frontend/")
       
-     console.log("user Signin");
-      // ...
+      
+     window.notify("user Signin successfuly", "success")
+     // ...
     })
     .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
+      window.notify("something want worng", "error")
+    
     });
 setState(initialState)
 

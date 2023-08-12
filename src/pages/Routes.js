@@ -10,7 +10,7 @@ import PrivateRoute from '../components/PrivateRoute'
 import { ToastContainer } from 'react-toastify';
 
 export default function Index() {
-    const { isAuth, user } = useAuthContext()
+    const { isAuth } = useAuthContext()
     return (
         <>
 

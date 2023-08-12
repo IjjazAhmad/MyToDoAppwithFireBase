@@ -1,40 +1,43 @@
 import React, { useEffect, useState } from 'react'
 
 import { collection, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
-import { useAuthContext } from '../../Context/AuthContext'
+
 import { firestore } from '../../../config/firebase';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-const initialState = { title: "", description: "", date: "" }
+
 
 export default function About() {
-  const [state, setState] = useState(initialState)
+
   const [documents, setDocuments] = useState([])
   const [todo, setTodo] = useState({})
   const [isApploading, setisApploading] = useState(true)
+  const [isModal, setisModal] = useState(true)
   const [isApploadingDelete, setisApploadingDelete] = useState(false)
-  const { user } = useAuthContext()
+  
 
 
   const handleChange = e => {
-    setState(s => ({ ...s, [e.target.name]: e.target.value }))
+    setTodo(s => ({ ...s, [e.target.name]: e.target.value }))
   }
 
-const handleUpdate= async(todo)=>{
+  const handleUpdate = async (todo) => {
+    setisModal(false)
+    const formData = { ...todo }
+    setisApploading(true)
+    try {
+      await setDoc(doc(firestore, "todos", formData.randumId), formData);
+      setDocuments(docs => [...docs, formData])
 
-const formData = {...todo}
+      window.notify("Add ToDo successfull", "success")
+      setisModal(true)
+    }
+    catch (err) {
+      console.error(err)
+      window.notify("something wants wrong, ToDo not added", "error")
+    }
+    setisApploading(false)
 
-try {
-  await setDoc(doc(firestore, "todos", formData.randumId), formData);
- setDocuments(docs=>[...docs, formData])
- 
-  window.notify("Add ToDo successfull", "success")
-}
-catch (err) {
-  console.error(err)
-  window.notify("something wants wrong, ToDo not added", "error")
-}
-
-}
+  }
 
 
 
@@ -61,7 +64,7 @@ catch (err) {
 
   useEffect(() => {
     fatchDocuments()
-  }, [])
+  }, [documents])
 
   const handleDelete = async (document) => {
     console.log(document);
@@ -138,10 +141,10 @@ catch (err) {
           </div>
         </div>
       </div>
-      
+
 
       {/* <!-- Modal -->*/}
-      <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={isModal}>
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
@@ -149,7 +152,7 @@ catch (err) {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-            <div className="row">
+              <div className="row">
                 <div className="col-12">
                   <div className="mb-3">
                     <input type="text" className="form-control" id="title" placeholder='Title' name='title' value={todo.title} onChange={handleChange} />
@@ -170,17 +173,22 @@ catch (err) {
                     <input type="file" className="form-control" id="image" name='image' placeholder='Upload image' />
                   </div>
                 </div>
-                
               </div>
-
-
-
-
-
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary" onClick={handleUpdate} >Save changes</button>
+              {!isApploading ?
+                <>
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" className="btn btn-primary" onClick={() => handleUpdate(todo)} >
+                    Save changes
+                  </button>
+                </> :
+                <>
+                  <div className="spinner-border" role="status" >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </>
+              }
             </div>
           </div>
         </div>
